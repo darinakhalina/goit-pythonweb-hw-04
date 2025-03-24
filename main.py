@@ -1,7 +1,7 @@
 import argparse
 import asyncio
 import logging
-import os
+import platform
 from aiopath import AsyncPath
 from aiofiles import open as aio_open
 
@@ -64,17 +64,16 @@ async def run(source: str, output: str):
 
     logging.info("Sorting completed!")
 
-def main():
+async def main():
     parser = argparse.ArgumentParser(description="Asynchronous file sorting by extension")
     parser.add_argument("--source", "-s", required=True, type=str, help="Path to the source folder")
     parser.add_argument("--output", "-o", required=True, type=str, help="Path to the destination folder")
     args = parser.parse_args()
 
-    if os.name == "nt":
+    await run(args.source, args.output)
+
+
+if __name__ == '__main__':
+    if platform.system() == 'Windows':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
-    asyncio.run(run(args.source, args.output))
-
-
-if __name__ == "__main__":
-    main()
+    asyncio.run(main())
